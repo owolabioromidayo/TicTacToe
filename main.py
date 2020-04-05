@@ -35,7 +35,7 @@ class TicTacToe:
 
         
         #Create Lines
-        self.linewidth = 3
+        self.linewidth = 7
         self.vert1 = self.canvas.create_line(self.width/3, 0,self.width/3 ,self.height, width=self.linewidth)
         self.vert2 = self.canvas.create_line(self.width*2/3, 0,self.width*2/3 ,self.height, width=self.linewidth)
 
@@ -75,7 +75,8 @@ class TicTacToe:
     def draw(self, letter, position):
         x = self.centers[position][0]
         y = self.centers[position][1]
-        self.canvas.create_text(x, y, text=letter, font=('Courier',44))
+        color = 'blue' if letter == 'O' else 'red'
+        self.canvas.create_text(x, y, text=letter, font=('Times',44), fill=color)
 
 
         
