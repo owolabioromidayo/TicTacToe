@@ -4,30 +4,33 @@ from tkinter import messagebox
 
 
 class TicTacToe:
-    def __init__(self):
-        # Initial variables
-        self.width = 800
-        self.height = 800
+    def __init__(self, size):
+        # Initial game state
+        self.size = size
+        self.choices = list(range(0, self.size**2))  # board postions
+        self.player_turn = True
+        self.game_over = False
+
+        # Logical board build
+        self.game = [{i: None} for i in range(self.size**2)]
+        # Groups list of dicts into groups of 3
+        iters = [iter(self.game)] * self.size
+        self.game = list(zip(*iters))
+        print(self.game)
+
+        self.build()
+
+    def build(self):
+        self.width, self.height = 800, 800
         self.root = tk.Tk()
         self.root.title("Tic-Tac-Toe")
         self.root.geometry(f"{self.width}x{self.height}")
-        self.choices = list(range(0, 9))
-        self.centers = [[133, 133], [400, 133], [667, 133], [133, 400], [
-            400, 400], [667, 400], [133, 667], [400, 667], [667, 667]]
-        self.player_turn = True
-        self.game_over = False
-        self.game = {}
-        for i in range(9):
-            self.game[i] = None
-
-
         self.root.bind('<Button-1>', self.on_click)
 
-        self.build_gui()
-
-        self.root.mainloop()
-
-    def build_gui(self):
+        self.centers = ([133, 133], [400, 133], [667, 133],
+                        [133, 400], [400, 400], [667, 400],
+                        [133, 667], [400, 667], [667, 667]
+                        )
         # Create Board
         self.canvas = tk.Canvas(
             self.root, width=self.width, height=self.height)
@@ -44,7 +47,7 @@ class TicTacToe:
             0, self.height/3, self.width, self.height/3, width=self.linewidth)
         self.horiz2 = self.canvas.create_line(
             0, self.height*2/3, self.width, self.height*2/3, width=self.linewidth)
-
+        self.root.mainloop()
 
     def on_click(self, event):
         if self.player_turn == True:
@@ -70,7 +73,6 @@ class TicTacToe:
         self.check_game_over()
         self.player_turn = True
 
-
     def draw(self, letter, position):
         x = self.centers[position][0]
         y = self.centers[position][1]
@@ -82,35 +84,33 @@ class TicTacToe:
         # Check rows
 
         for i in [0, 3, 6]:
-            if self.game[i] == self.game[i+1] == self.game[i+2] and self.game[i] != None:
-                self.alert(f"{self.game[i]} won")
-                self.end_game()
-                return
+            if self.game[i].count(self.game[i][0]) == len(self.game[i]) and self.game[i] != None:
+                # if self.game[i] == self.game[i+1] == self.game[i+2] and self.game[i] != None:
+                #     self.end_game(f"{self.game[i]} won")
+
+                #     return
+                return self.end_game(f"{self.game[i]} won")
 
         for i in [0, 1, 2]:
             if self.game[i] == self.game[i+3] == self.game[i+6] and self.game[i] != None:
-                self.alert(f"{self.game[i]} won")
-                self.end_game()
+                self.end_game(f"{self.game[i]} won")
+
                 return
 
         if self.game[0] == self.game[4] == self.game[8] and self.game[0] != None:
-            self.alert(f"{self.game[0]} won")
-            self.end_game()
+            self.end_game(f"{self.game[0]} won")
             return
 
         if self.game[2] == self.game[4] == self.game[6] and self.game[2] != None:
-            self.alert(f"{self.game[2]} won")
-            self.end_game()
+            self.end_game(f"{self.game[2]} won")
             return
 
-    def alert(self, message):
+    def end_game(self, message):
         messagebox.showinfo(title='Game Over', message=message)
-
-
-    def end_game(self):
         self.root.destroy()
 
     def get_position(self, x, y):
+        """returns board position based on x and y coords"""
         for i in range(1, 4):
             _max = 267*i
             if x < _max:
@@ -122,5 +122,4 @@ class TicTacToe:
                     return i-1
 
 
-
-ttc = TicTacToe()
+ttc = TicTacToe(5)
