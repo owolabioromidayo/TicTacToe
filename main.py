@@ -11,43 +11,19 @@ class TicTacToe:
         self.choices = set(range(0, self.size**2))  # board postions
         self.player_turn = True
 
-        # Logical board build
-        # self.game = [None for i in range(self.size**2)]
-        # # Groups list of dicts into groups of 3
-        # iters = [iter(self.game)] * self.size
-        # # iters = list(map(lambda x: list(x), iters))
-
-        # # print(iters)
-        # self.game = list(zip(*iters))
-        # self.game = list(map(lambda x: list(x), self.game))
-
         self.game = [[None for i in range(self.size)]for i in range(self.size)]
-        # print(self.game)
 
-        # self._test_space()
         self.build()
 
     def gen_centers(self):
-        # x_edges = np.uniform(0, self.size*100, self.size)
-        # edges = [100*i for i in range(self.size+1)]
-        # print(edges)
-        # centers = []
-        # for idx, i in enumerate(edges[:-1]):
-        #     new_center = (i + edges[idx+1])/2
-        #     centers.append(new_center)
 
-        self.centers_1d = [self.cell_size/2+(self.cell_size*i)
-                           for i in range(self.size)]
+        self.centers_1d = [
+            self.cell_size/2+(self.cell_size*i)for i in range(self.size)
+        ]
 
-        # print(centers)
-        # pairs = []
-        # for i in centers:
-        #     new_row = [[i, j] for j in centers]
-        #     for pos in new_row:
-        #         pairs.append(pos)
-
-        self.centers = [[x, y]
-                        for x in self.centers_1d for y in self.centers_1d]
+        self.centers = [
+            [x, y]for x in self.centers_1d for y in self.centers_1d
+        ]
 
     def gen_lines(self, linewidth):
         # Doesnt include first and last, only ones necceaasry for line to cross
@@ -61,16 +37,6 @@ class TicTacToe:
             self.canvas.create_line(
                 0, edge, self.width, edge, width=linewidth
             )  # horiz lines
-
-        # self.vert1 = self.canvas.create_line(
-        #     self.width/3, 0, self.width/3, self.height, width=linewidth)
-        # self.vert2 = self.canvas.create_line(
-        #     self.width*2/3, 0, self.width*2/3, self.height, width=linewidth)
-
-        # self.horiz1 = self.canvas.create_line(
-        #     0, self.height/3, self.width, self.height/3, width=linewidth)
-        # self.horiz2 = self.canvas.create_line(
-        #     0, self.height*2/3, self.width, self.height*2/3, width=linewidth)
 
     def build(self):
         self.width = self.height = self.size*self.cell_size
@@ -100,9 +66,6 @@ class TicTacToe:
                 self.player_turn = False
                 self.check_game_over()
                 self.computer_choice()
-                # print(self.game)
-        else:
-            pass
 
     def computer_choice(self):
         choice = random.sample(self.choices, 1)[0]
@@ -124,17 +87,6 @@ class TicTacToe:
             x, y, text=letter, font=('Times', 44), fill=color)
 
     def check_game_over(self):
-        # # Check rows
-        # for row in self.game:
-        #     if row.count(row[0]) == len(row) and row[0] is not None:
-        #         return self.end_game(f"{row[0]} won")
-
-        # # Check cols
-        # for i in range(len(self.game)):
-        #     col = [row[i] for row in self.game]
-        #     if col.count(col[0]) == len(col) and col[0] is not None:
-        #         return self.end_game(f"{col[0]} won")
-
         # Check rows and cols in one loop (faster)
         diag1, diag2 = [], []
         for i, row in enumerate(self.game):
@@ -157,22 +109,6 @@ class TicTacToe:
         if diag2.count(diag2[0]) == len(diag2) and diag2[0] is not None:
             return self.end_game(f"{diag2[0]} won")
 
-        # Check diags
-
-        # for i in [0, 1, 2]:
-        #     if self.game[i] == self.game[i+3] == self.game[i+6] and self.game[i] != None:
-        #         self.end_game(f"{self.game[i]} won")
-
-        #         return
-
-        # if self.game[0] == self.game[4] == self.game[8] and self.game[0] != None:
-        #     self.end_game(f"{self.game[0]} won")
-        #     return
-
-        # if self.game[2] == self.game[4] == self.game[6] and self.game[2] != None:
-        #     self.end_game(f"{self.game[2]} won")
-        #     return
-
     def end_game(self, message):
         messagebox.showinfo(title='Game Over', message=message)
         self.root.destroy()
@@ -189,4 +125,5 @@ class TicTacToe:
         return pos, x_pos, y_pos
 
 
-ttc = TicTacToe(5, 100)
+if __name__ == "__main__":
+    ttc = TicTacToe(5, 100)
