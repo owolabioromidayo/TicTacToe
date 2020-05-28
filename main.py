@@ -1,8 +1,7 @@
 import random
-import itertools
+import sys
 import tkinter as tk
 from tkinter import messagebox
-import numpy as np
 
 
 class TicTacToe:
@@ -11,18 +10,19 @@ class TicTacToe:
         self.size, self.cell_size = size, cell_size
         self.choices = set(range(0, self.size**2))  # board postions
         self.player_turn = True
-        self.game_over = False
 
         # Logical board build
-        self.game = [{i: None} for i in range(self.size**2)]
-        # Groups list of dicts into groups of 3
-        iters = [iter(self.game)] * self.size
-        # iters = list(map(lambda x: list(x), iters))
+        # self.game = [None for i in range(self.size**2)]
+        # # Groups list of dicts into groups of 3
+        # iters = [iter(self.game)] * self.size
+        # # iters = list(map(lambda x: list(x), iters))
 
-        # print(iters)
-        self.game = list(zip(*iters))
-        self.game = list(map(lambda x: list(x), self.game))
-        print(self.game)
+        # # print(iters)
+        # self.game = list(zip(*iters))
+        # self.game = list(map(lambda x: list(x), self.game))
+
+        self.game = [[None for i in range(self.size)]for i in range(self.size)]
+        # print(self.game)
 
         # self._test_space()
         self.build()
@@ -96,21 +96,24 @@ class TicTacToe:
             if pos in self.choices:
                 self.draw('X', pos)
                 self.choices.remove(pos)
-                self.game[y_pos][x_pos*(y_pos+1)] = {pos: 'X'}
-                print(self.game)
-                # self.check_game_over()
-                # self.player_turn = False
-
-                # self.computer_choice()
+                self.game[y_pos][x_pos] = 'X'
+                self.player_turn = False
+                self.check_game_over()
+                self.computer_choice()
+                # print(self.game)
         else:
             pass
 
     def computer_choice(self):
-        self.choice = random.choice(self.choices)
-        print(self.choice)
-        self.draw('O', self.choice)
-        self.choices.remove(self.choice)
-        self.game[self.choice] = 'O'
+        choice = random.sample(self.choices, 1)[0]
+
+        y = choice // self.size
+        x = choice - (y * self.size)
+
+        print(choice)
+        self.draw('O', choice)
+        self.choices.remove(choice)
+        self.game[y][x] = 'O'
         self.check_game_over()
         self.player_turn = True
 
@@ -121,33 +124,59 @@ class TicTacToe:
             x, y, text=letter, font=('Times', 44), fill=color)
 
     def check_game_over(self):
-        # Check rows
+        # # Check rows
+        # for row in self.game:
+        #     if row.count(row[0]) == len(row) and row[0] is not None:
+        #         return self.end_game(f"{row[0]} won")
 
-        for i in [0, 3, 6]:
-            if self.game[i].count(self.game[i][0]) == len(self.game[i]) and self.game[i] != None:
-                # if self.game[i] == self.game[i+1] == self.game[i+2] and self.game[i] != None:
-                #     self.end_game(f"{self.game[i]} won")
+        # # Check cols
+        # for i in range(len(self.game)):
+        #     col = [row[i] for row in self.game]
+        #     if col.count(col[0]) == len(col) and col[0] is not None:
+        #         return self.end_game(f"{col[0]} won")
 
-                #     return
-                return self.end_game(f"{self.game[i]} won")
+        # Check rows and cols in one loop (faster)
+        diag1, diag2 = [], []
+        for i, row in enumerate(self.game):
 
-        for i in [0, 1, 2]:
-            if self.game[i] == self.game[i+3] == self.game[i+6] and self.game[i] != None:
-                self.end_game(f"{self.game[i]} won")
+            # Check row
+            if row.count(row[0]) == len(row) and row[0] is not None:
+                return self.end_game(f"{row[0]} won")
 
-                return
+            # check col
+            col = [row[i] for row in self.game]
+            if col.count(col[0]) == len(col) and col[0] is not None:
+                return self.end_game(f"{col[0]} won")
 
-        if self.game[0] == self.game[4] == self.game[8] and self.game[0] != None:
-            self.end_game(f"{self.game[0]} won")
-            return
+            diag1.append(self.game[i][i])
+            diag2.append(self.game[i][len(self.game)-1-i])
 
-        if self.game[2] == self.game[4] == self.game[6] and self.game[2] != None:
-            self.end_game(f"{self.game[2]} won")
-            return
+        if diag1.count(diag1[0]) == len(diag1) and diag1[0] is not None:
+            return self.end_game(f"{diag1[0]} won")
+
+        if diag2.count(diag2[0]) == len(diag2) and diag2[0] is not None:
+            return self.end_game(f"{diag2[0]} won")
+
+        # Check diags
+
+        # for i in [0, 1, 2]:
+        #     if self.game[i] == self.game[i+3] == self.game[i+6] and self.game[i] != None:
+        #         self.end_game(f"{self.game[i]} won")
+
+        #         return
+
+        # if self.game[0] == self.game[4] == self.game[8] and self.game[0] != None:
+        #     self.end_game(f"{self.game[0]} won")
+        #     return
+
+        # if self.game[2] == self.game[4] == self.game[6] and self.game[2] != None:
+        #     self.end_game(f"{self.game[2]} won")
+        #     return
 
     def end_game(self, message):
         messagebox.showinfo(title='Game Over', message=message)
         self.root.destroy()
+        sys.exit()
 
     def get_pos(self, x, y):
         """returns board position based on x and y coords"""
