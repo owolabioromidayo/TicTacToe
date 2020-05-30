@@ -3,12 +3,13 @@ import tkinter as tk
 import minimax_helpers as minimax
 
 from tkinter import messagebox
-
+from math import inf as infinity
 
 class TicTacToe:
-    def __init__(self, size, cell_size):
+    def __init__(self, size, cell_size, choice_mechanism='minmax'):
         # Initial game state
         self.size, self.cell_size = size, cell_size
+        self.choice_mechanism = choice_mechanism
         self.choices = set(range(0, self.size**2))  # board postions
         self.player_turn = True
 
@@ -70,7 +71,11 @@ class TicTacToe:
                 self.computer_choice()
 
     def computer_choice(self):
-        choice = minimax.minimax(self.game, 'O')['index']
+        if self.choice_mechanism == 'minmax':
+            choice = minimax.alphabeta(self.game, 'O', -infinity, infinity )['index']
+
+        else:
+            choice = random.sample(self.choices, 1)[0]
         
         y = choice // self.size
         x = choice - (y * self.size)
@@ -140,4 +145,4 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    ttc = TicTacToe(3, 100)
+    ttc = TicTacToe(4, 100, 'random')
