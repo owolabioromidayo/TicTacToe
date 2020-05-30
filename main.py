@@ -6,7 +6,7 @@ from tkinter import messagebox
 from math import inf as infinity
 
 class TicTacToe:
-    def __init__(self, size, cell_size, choice_mechanism='minmax'):
+    def __init__(self, size, cell_size, choice_mechanism='minimax'):
         # Initial game state
         self.size, self.cell_size = size, cell_size
         self.choice_mechanism = choice_mechanism
@@ -85,11 +85,14 @@ class TicTacToe:
         if self.choice_mechanism == 'player':
             return
 
-        elif self.choice_mechanism == 'minmax':
+        elif self.choice_mechanism == 'minimax':
             choice = minimax.alphabeta(self.game, 'O', -infinity, infinity )['index']
 
         elif self.choice_mechanism == 'random':
             choice = random.sample(self.choices, 1)[0]
+
+        else:
+            self.end_game('Unavailable choice mechanism')
 
         
         y = choice // self.size
@@ -160,4 +163,4 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    ttc = TicTacToe(4, 100, 'player')
+    ttc = TicTacToe(4, 100, )
