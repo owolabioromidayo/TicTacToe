@@ -70,12 +70,27 @@ class TicTacToe:
                 self.check_game_over()
                 self.computer_choice()
 
+        if not self.player_turn and self.choice_mechanism == 'player':
+            pos, x_pos, y_pos = self.get_pos(event.x, event.y)
+            if pos in self.choices:
+                self.draw('O', pos)
+                self.choices.remove(pos)
+                self.game[y_pos][x_pos] = 'O'
+                self.player_turn = True
+                self.check_game_over()
+             
+
+
     def computer_choice(self):
-        if self.choice_mechanism == 'minmax':
+        if self.choice_mechanism == 'player':
+            return
+
+        elif self.choice_mechanism == 'minmax':
             choice = minimax.alphabeta(self.game, 'O', -infinity, infinity )['index']
 
-        else:
+        elif self.choice_mechanism == 'random':
             choice = random.sample(self.choices, 1)[0]
+
         
         y = choice // self.size
         x = choice - (y * self.size)
@@ -145,4 +160,4 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    ttc = TicTacToe(4, 100, 'random')
+    ttc = TicTacToe(4, 100, 'player')
