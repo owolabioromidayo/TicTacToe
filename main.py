@@ -1,6 +1,8 @@
 import random
 import sys
 import tkinter as tk
+import minmax_helpers as minmax
+
 from tkinter import messagebox
 
 
@@ -11,7 +13,7 @@ class TicTacToe:
         self.choices = set(range(0, self.size**2))  # board postions
         self.player_turn = True
 
-        self.game = [[None for i in range(self.size)]for i in range(self.size)]
+        self.game = [[' ' for j in range(self.size)]for i in range(self.size)]
 
         self.build()
 
@@ -68,7 +70,8 @@ class TicTacToe:
                 self.computer_choice()
 
     def computer_choice(self):
-        choice = random.sample(self.choices, 1)[0]
+        choice = minmax.get_best_move(self.game, 'O')
+        print(choice)
 
         y = choice // self.size
         x = choice - (y * self.size)
@@ -80,6 +83,7 @@ class TicTacToe:
         self.check_game_over()
         self.player_turn = True
 
+
     def draw(self, letter, pos):
         x, y = self.centers[pos][1], self.centers[pos][0]
         color = 'blue' if letter == 'O' else 'red'
@@ -87,27 +91,38 @@ class TicTacToe:
             x, y, text=letter, font=('Times', 44), fill=color)
 
     def check_game_over(self):
+
         # Check rows and cols in one loop (faster)
         diag1, diag2 = [], []
         for i, row in enumerate(self.game):
 
             # Check row
-            if row.count(row[0]) == len(row) and row[0] is not None:
+            if row.count(row[0]) == len(row) and row[0] != ' ':
                 return self.end_game(f"{row[0]} won")
 
             # check col
             col = [row[i] for row in self.game]
-            if col.count(col[0]) == len(col) and col[0] is not None:
+            if col.count(col[0]) == len(col) and col[0] != ' ':
                 return self.end_game(f"{col[0]} won")
 
             diag1.append(self.game[i][i])
             diag2.append(self.game[i][len(self.game)-1-i])
 
-        if diag1.count(diag1[0]) == len(diag1) and diag1[0] is not None:
+        if diag1.count(diag1[0]) == len(diag1) and diag1[0] != ' ':
             return self.end_game(f"{diag1[0]} won")
 
-        if diag2.count(diag2[0]) == len(diag2) and diag2[0] is not None:
+        if diag2.count(diag2[0]) == len(diag2) and diag2[0] != ' ':
             return self.end_game(f"{diag2[0]} won")
+
+        # Check draw
+        count = 0
+        for i in self.game:
+            for j in i:
+                if j != ' ':
+                    count += 1
+
+        if count == self.size**2:
+            return self.end_game("Draw!")
 
     def end_game(self, message):
         messagebox.showinfo(title='Game Over', message=message)
@@ -126,4 +141,4 @@ class TicTacToe:
 
 
 if __name__ == "__main__":
-    ttc = TicTacToe(5, 100)
+    ttc = TicTacToe(3, 100)
