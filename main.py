@@ -1,7 +1,6 @@
-import random
-import sys
+import random, sys, time
 import tkinter as tk
-import minmax_helpers as minmax
+import minimax_helpers as minimax
 
 from tkinter import messagebox
 
@@ -56,6 +55,7 @@ class TicTacToe:
         self.canvas.pack()
 
         self.gen_lines(7)
+        # self.computer_choice() #computer first
         self.root.mainloop()
 
     def on_click(self, event):
@@ -70,9 +70,8 @@ class TicTacToe:
                 self.computer_choice()
 
     def computer_choice(self):
-        choice = minmax.get_best_move(self.game, 'O')
-        print(choice)
-
+        choice = minimax.minimax(self.game, 'O')['index']
+        
         y = choice // self.size
         x = choice - (y * self.size)
 
